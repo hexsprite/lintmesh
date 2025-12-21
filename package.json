@@ -31,8 +31,10 @@
   },
   "dependencies": {
     "@aivenio/tsc-output-parser": "^2.1.0",
+    "commander": "^14.0.2",
     "execa": "^9.5.2",
     "fast-glob": "^3.3.3",
+    "strip-json-comments": "^5.0.3",
     "zod": "^3.24.1"
   },
   "devDependencies": {

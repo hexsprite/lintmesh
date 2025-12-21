@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 export const SeveritySchema = z.enum(['error', 'warning', 'info']);
 
-export const LinterNameSchema = z.enum(['eslint', 'oxlint', 'tsgo']);
+export const LinterNameSchema = z.enum(['eslint', 'oxlint', 'tsgo', 'biome', 'tsc']);
 
 export const ReplacementSchema = z.object({
   startOffset: z.number().int().nonnegative(),

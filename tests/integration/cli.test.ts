@@ -15,13 +15,13 @@ describe('lintmesh CLI integration', () => {
       const result = await $`bun run dist/lintmesh.js --help`.quiet().nothrow();
       expect(result.exitCode).toBe(0);
       expect(result.stdout.toString()).toContain('lintmesh');
-      expect(result.stdout.toString()).toContain('USAGE');
+      expect(result.stdout.toString()).toContain('Usage:');
     });
 
     it('shows version with --version', async () => {
       const result = await $`bun run dist/lintmesh.js --version`.quiet().nothrow();
       expect(result.exitCode).toBe(0);
-      expect(result.stdout.toString()).toMatch(/lintmesh v\d+\.\d+\.\d+/);
+      expect(result.stdout.toString()).toMatch(/\d+\.\d+\.\d+/);
     });
   });
 
