@@ -90,8 +90,8 @@ export const CONFIG_DEFAULTS = {
  * Config file names to search for (in order of preference)
  */
 export const CONFIG_FILES = [
-  'lintmesh.config.jsonc',
-  'lintmesh.config.json',
+  'lintmesh.jsonc',
+  'lintmesh.json',
   '.config/lintmesh.jsonc',
   '.config/lintmesh.json',
 ] as const;

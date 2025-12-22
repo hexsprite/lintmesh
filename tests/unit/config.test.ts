@@ -74,7 +74,7 @@ describe('CONFIG_DEFAULTS', () => {
 describe('CONFIG_FILES', () => {
   test('lists config file locations', () => {
     expect(CONFIG_FILES.length).toBeGreaterThan(0);
-    expect(CONFIG_FILES).toContain('lintmesh.config.jsonc');
+    expect(CONFIG_FILES).toContain('lintmesh.jsonc');
     expect(CONFIG_FILES).toContain('.config/lintmesh.jsonc');
   });
 });

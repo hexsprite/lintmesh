@@ -25,7 +25,7 @@ program
 
 program
   .command('init')
-  .description('Generate lintmesh.config.jsonc by detecting installed linters')
+  .description('Generate lintmesh.jsonc by detecting installed linters')
   .option('--force', 'Overwrite existing config', false)
   .action(async (opts) => {
     try {
