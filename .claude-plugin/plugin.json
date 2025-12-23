@@ -1,0 +1,11 @@
+{
+  "name": "lintmesh",
+  "description": "Unified linter runner with JSON output for AI agents. Runs eslint, oxlint, and tsgo in parallel.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Jordan Baker"
+  },
+  "repository": "https://github.com/hexsprite/lintmesh",
+  "license": "MIT",
+  "keywords": ["linting", "eslint", "oxlint", "typescript", "code-quality"]
+}
