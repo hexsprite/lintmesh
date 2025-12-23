@@ -6,7 +6,7 @@ export type Severity = 'error' | 'warning' | 'info';
 /**
  * Supported linter identifiers
  */
-export type LinterName = 'eslint' | 'oxlint' | 'tsgo';
+export type LinterName = 'eslint' | 'oxlint' | 'tsc' | 'biome';
 
 /**
  * A single replacement operation for an autofix

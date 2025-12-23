@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'bun:test';
-import { TsgoAdapter, filterByPatterns } from '../../../src/linters/tsgo.js';
+import { TscAdapter, filterByPatterns } from '../../../src/linters/tsc.js';
 import type { Issue } from '../../../src/types.js';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -9,17 +9,17 @@ const mockOutput = fs.readFileSync(
   'utf-8'
 );
 
-describe('TsgoAdapter', () => {
+describe('TscAdapter', () => {
   describe('parseOutput', () => {
     it('parses tsc-style output correctly', () => {
-      const adapter = new TsgoAdapter();
+      const adapter = new TscAdapter();
       const issues = adapter.parseOutput(mockOutput, '/project');
 
       expect(issues.length).toBeGreaterThan(0);
     });
 
     it('extracts error codes as ruleId', () => {
-      const adapter = new TsgoAdapter();
+      const adapter = new TscAdapter();
       const issues = adapter.parseOutput(mockOutput, '/project');
 
       const ts2322 = issues.find(i => i.ruleId.includes('TS2322'));
@@ -27,7 +27,7 @@ describe('TsgoAdapter', () => {
     });
 
     it('extracts line and column', () => {
-      const adapter = new TsgoAdapter();
+      const adapter = new TscAdapter();
       const issues = adapter.parseOutput(mockOutput, '/project');
 
       if (issues.length > 0) {
@@ -38,24 +38,24 @@ describe('TsgoAdapter', () => {
     });
 
     it('handles empty output', () => {
-      const adapter = new TsgoAdapter();
+      const adapter = new TscAdapter();
       const issues = adapter.parseOutput('', '/project');
 
       expect(issues).toHaveLength(0);
     });
 
-    it('sets source to tsgo', () => {
-      const adapter = new TsgoAdapter();
+    it('sets source to tsc', () => {
+      const adapter = new TscAdapter();
       const issues = adapter.parseOutput(mockOutput, '/project');
 
-      expect(issues.every(i => i.source === 'tsgo')).toBe(true);
+      expect(issues.every(i => i.source === 'tsc')).toBe(true);
     });
   });
 
   describe('name', () => {
-    it('returns tsgo', () => {
-      const adapter = new TsgoAdapter();
-      expect(adapter.name).toBe('tsgo');
+    it('returns tsc', () => {
+      const adapter = new TscAdapter();
+      expect(adapter.name).toBe('tsc');
     });
   });
 });
@@ -69,9 +69,9 @@ describe('filterByPatterns', () => {
       endLine: 1,
       endColumn: 1,
       severity: 'error',
-      ruleId: 'tsgo/TS2322',
+      ruleId: 'tsc/TS2322',
       message: 'test error',
-      source: 'tsgo',
+      source: 'tsc',
     };
   }
 

@@ -21,8 +21,8 @@ export function filterByPatterns(issues: Issue[], patterns: string[]): Issue[] {
   );
 }
 
-export class TsgoAdapter implements Linter {
-  readonly name = 'tsgo' as const;
+export class TscAdapter implements Linter {
+  readonly name = 'tsc' as const;
 
   private getTsgoPath(cwd: string): string {
     return path.join(cwd, 'node_modules', '.bin', 'tsgo');
@@ -145,9 +145,9 @@ export class TsgoAdapter implements Linter {
           endLine: item.value.cursor.value.line,
           endColumn: item.value.cursor.value.col,
           severity: item.value.tsError.value.type === 'error' ? 'error' : 'warning',
-          ruleId: `tsgo/${item.value.tsError.value.errorString}`,
+          ruleId: `tsc/${item.value.tsError.value.errorString}`,
           message: item.value.message.value.trim(),
-          source: 'tsgo' as const,
+          source: 'tsc' as const,
         };
       });
     } catch {
