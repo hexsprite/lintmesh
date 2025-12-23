@@ -3,6 +3,7 @@ import { resolveFiles } from './utils/files.js';
 import { ESLintAdapter } from './linters/eslint.js';
 import { OxlintAdapter } from './linters/oxlint.js';
 import { TsgoAdapter } from './linters/tsgo.js';
+import { BiomeAdapter } from './linters/biome.js';
 import type { Linter } from './linters/interface.js';
 
 /**
@@ -21,6 +22,9 @@ function createAdapters(linterNames: LinterName[]): Linter[] {
         break;
       case 'tsgo':
         adapters.push(new TsgoAdapter());
+        break;
+      case 'biome':
+        adapters.push(new BiomeAdapter());
         break;
     }
   }

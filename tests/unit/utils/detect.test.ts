@@ -25,13 +25,13 @@ describe('detectLinter', () => {
     expect(result.inDevDeps).toBe(true); // typescript in devDeps
   });
 
-  test('biome not installed in this project', async () => {
+  test('biome installed in this project', async () => {
     const result = await detectLinter('biome', process.cwd());
 
     expect(result.linterId).toBe('biome');
     expect(result.hasConfig).toBe(false);
-    expect(result.inDevDeps).toBe(false);
-    // available depends on whether biome is on PATH
+    expect(result.inDevDeps).toBe(true);
+    expect(result.available).toBe(true);
   });
 });
 

@@ -1,0 +1,56 @@
+{
+  "summary": {
+    "changed": 0,
+    "unchanged": 1,
+    "matches": 0,
+    "duration": {"secs": 0, "nanos": 5000000},
+    "scannerDuration": {"secs": 0, "nanos": 1000000},
+    "errors": 1,
+    "warnings": 1,
+    "infos": 0,
+    "skipped": 0,
+    "suggestedFixesSkipped": 0,
+    "diagnosticsNotPrinted": 0
+  },
+  "diagnostics": [
+    {
+      "category": "lint/correctness/noUnusedVariables",
+      "severity": "warning",
+      "description": "This variable unusedVar is unused.",
+      "message": [
+        {"elements": [], "content": "This variable "},
+        {"elements": ["Emphasis"], "content": "unusedVar"},
+        {"elements": [], "content": " is unused."}
+      ],
+      "advices": {"advices": []},
+      "verboseAdvices": {"advices": []},
+      "location": {
+        "path": {"file": "src/foo.ts"},
+        "span": [50, 59],
+        "sourceCode": "// Comment line 1\n// Comment line 2\nconst unusedVar = 42;\nexport const x = 1;\n"
+      },
+      "tags": ["fixable"],
+      "source": null
+    },
+    {
+      "category": "lint/suspicious/noExplicitAny",
+      "severity": "error",
+      "description": "Unexpected any. Specify a different type.",
+      "message": [
+        {"elements": [], "content": "Unexpected "},
+        {"elements": ["Emphasis"], "content": "any"},
+        {"elements": [], "content": ". Specify a different type."}
+      ],
+      "advices": {"advices": []},
+      "verboseAdvices": {"advices": []},
+      "location": {
+        "path": {"file": "/project/src/bar.ts"},
+        "span": [20, 23],
+        "sourceCode": "function foo(x: any): void {\n  console.log(x);\n}\n"
+      },
+      "tags": [],
+      "source": null
+    }
+  ],
+  "command": "lint"
+}
