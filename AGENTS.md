@@ -5,7 +5,7 @@ Use `lintmesh` to run multiple linters in parallel and get unified JSON output. 
 ## Quick Start
 
 ```bash
-# Lint everything (uses eslint + oxlint + tsgo by default)
+# Lint everything (uses eslint + oxlint + tsc by default)
 lintmesh
 
 # Lint specific files or directories
@@ -66,9 +66,9 @@ Each problem found. Sorted by `path`, then `line`, then `column`:
   ruleId: string;           // Format: "linter/rule-name"
                             // Examples: "eslint/no-unused-vars"
                             //           "oxlint/no-debugger"
-                            //           "tsgo/TS2322" (type errors use TS codes)
+                            //           "tsc/TS2322" (type errors use TS codes)
   message: string;          // Human-readable, e.g. "'foo' is defined but never used"
-  source: string;           // Which linter: "eslint", "oxlint", "tsgo"
+  source: string;           // Which linter: "eslint", "oxlint", "tsc", "biome"
 
   // Optional fields
   fix?: Fix;                // Present if autofix available
@@ -138,7 +138,7 @@ Aggregate counts for quick checks:
 
 | Flag | Default | Description |
 |------|---------|-------------|
-| `--linters <list>` | `eslint,oxlint,tsgo` | Comma-separated linters to run |
+| `--linters <list>` | `eslint,oxlint,tsc` | Comma-separated linters to run |
 | `--fail-on <level>` | `error` | Exit 1 threshold: `error`, `warning`, `info` |
 | `--timeout <ms>` | `30000` | Per-linter timeout |
 | `--quiet` | `false` | Suppress stderr progress |
@@ -193,9 +193,8 @@ lintmesh --quiet | jq '.issues | group_by(.path)'
 |--------|-----------------|
 | `eslint` | JS/TS lint rules, code quality |
 | `oxlint` | Fast Rust-based linter, subset of eslint rules |
-| `tsgo` | TypeScript type errors (experimental ts-go) |
-| `biome` | Formatter + linter (planned) |
-| `tsc` | TypeScript compiler errors (planned) |
+| `tsc` | TypeScript compiler errors |
+| `biome` | Fast Rust-based formatter + linter |
 
 Linters must be installed separately. Lintmesh skips unavailable ones with a warning.
 

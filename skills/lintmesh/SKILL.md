@@ -1,6 +1,6 @@
 ---
 name: lintmesh
-description: Run multiple linters (eslint, oxlint, tsgo) in parallel with unified JSON output. Use when linting code, checking for errors before commits, or debugging lint failures. Triggers on "lint", "check code", "run linters", or after editing JS/TS files.
+description: Run multiple linters (eslint, oxlint, tsc, biome) in parallel with unified JSON output. Use when linting code, checking for errors before commits, or debugging lint failures. Triggers on "lint", "check code", "run linters", or after editing JS/TS files.
 ---
 
 # Lintmesh
@@ -10,7 +10,7 @@ Unified linter runner. One command, JSON output, all issues sorted by file:line.
 ## Usage
 
 ```bash
-# Lint everything (default: eslint + oxlint + tsgo)
+# Lint everything (default: eslint + oxlint + tsc)
 lintmesh --quiet
 
 # Lint specific paths
@@ -31,7 +31,7 @@ Always use `--quiet` to suppress stderr progress.
     line: number;           // 1-indexed
     column: number;
     severity: "error" | "warning" | "info";
-    ruleId: string;         // "eslint/no-unused-vars", "oxlint/no-debugger", "tsgo/TS2322"
+    ruleId: string;         // "eslint/no-unused-vars", "oxlint/no-debugger", "tsc/TS2322"
     message: string;
     source: string;         // Which linter
     fix?: {                 // Present if autofixable
@@ -55,7 +55,7 @@ Always use `--quiet` to suppress stderr progress.
 
 | Flag | Default | Purpose |
 |------|---------|---------|
-| `--linters <list>` | `eslint,oxlint,tsgo` | Which linters |
+| `--linters <list>` | `eslint,oxlint,tsc` | Which linters |
 | `--fail-on <level>` | `error` | Exit 1 threshold |
 | `--timeout <ms>` | `30000` | Per-linter timeout |
 | `--quiet` | `false` | No stderr |

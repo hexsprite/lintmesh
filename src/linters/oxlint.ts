@@ -63,6 +63,7 @@ export class OxlintAdapter implements Linter {
 
     const args = [
       '--format', 'json',
+      '--type-aware',
       ...options.files,
     ];
 
