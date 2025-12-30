@@ -11,8 +11,11 @@ import { exec } from '../utils/exec.js';
 export function filterByPatterns(issues: Issue[], patterns: string[]): Issue[] {
   if (patterns.length === 0) return issues; // No filter = all issues
 
-  // Normalize patterns (remove trailing slashes)
-  const normalized = patterns.map(p => p.replace(/\/+$/, ''));
+  // Normalize patterns: remove trailing slashes, treat './' as '.'
+  const normalized = patterns.map(p => p.replace(/\/+$/, '').replace(/^\.\//, '.'));
+
+  // '.' means "current directory" = match everything
+  if (normalized.includes('.')) return issues;
 
   return issues.filter(issue =>
     normalized.some(pattern =>

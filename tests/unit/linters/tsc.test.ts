@@ -129,4 +129,22 @@ describe('filterByPatterns', () => {
     expect(result).toHaveLength(1);
     expect(result[0].path).toBe('lib/external.ts');
   });
+
+  it('returns all issues when pattern is "."', () => {
+    const result = filterByPatterns(issues, ['.']);
+
+    expect(result).toHaveLength(4);
+  });
+
+  it('returns all issues when pattern is "./"', () => {
+    const result = filterByPatterns(issues, ['./']);
+
+    expect(result).toHaveLength(4);
+  });
+
+  it('returns all issues when pattern is "./."', () => {
+    const result = filterByPatterns(issues, ['./src', '.']);
+
+    expect(result).toHaveLength(4);
+  });
 });
