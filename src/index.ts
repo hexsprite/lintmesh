@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import { program } from 'commander';
+import { createRequire } from 'node:module';
 import { runLinters } from './runner.js';
 import { computeExitCode } from './utils/exit-code.js';
 import { init, printInitSummary } from './init.js';
@@ -8,8 +9,10 @@ import { loadConfig, getConfigWithDefaults } from './utils/config-loader.js';
 import type { LinterName, Severity } from './types.js';
 import type { LinterId } from './config.js';
 
+const require = createRequire(import.meta.url);
+const { version: VERSION } = require('../package.json');
+
 const VALID_LINTERS = ['eslint', 'oxlint', 'tsc', 'biome'] as const;
-const VERSION = '0.1.0';
 
 /** Map LinterId from config to LinterName used by adapters */
 function linterIdToName(id: LinterId): LinterName {
