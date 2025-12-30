@@ -59,13 +59,18 @@ export class OxlintAdapter implements Linter {
 
   async run(options: LinterOptions): Promise<LinterResult> {
     const startTime = Date.now();
+    const bin = this.getBinPath(options.cwd);
 
     const args = [
       '--format', 'json',
       ...options.files,
     ];
 
-    const result = await exec(this.getBinPath(options.cwd), args, {
+    if (options.verbose) {
+      console.error(`lintmesh: [oxlint] ${bin} ${args.join(' ')}`);
+    }
+
+    const result = await exec(bin, args, {
       timeout: options.timeout,
       cwd: options.cwd,
     });

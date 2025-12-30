@@ -33,7 +33,7 @@ function expandPattern(pattern: string, cwd: string): string {
 /**
  * Resolve file patterns to absolute paths
  */
-export async function resolveFiles(patterns: string[], cwd: string): Promise<string[]> {
+export async function resolveFiles(patterns: string[], cwd: string, exclude?: string[]): Promise<string[]> {
   let effectivePatterns: string[];
 
   if (patterns.length === 0) {
@@ -42,10 +42,13 @@ export async function resolveFiles(patterns: string[], cwd: string): Promise<str
     effectivePatterns = patterns.map(p => expandPattern(p, cwd));
   }
 
+  // Merge default ignore patterns with user-provided exclude
+  const ignore = exclude ? [...DEFAULT_IGNORE, ...exclude] : DEFAULT_IGNORE;
+
   return await fg(effectivePatterns, {
     cwd,
     absolute: true,
-    ignore: DEFAULT_IGNORE,
+    ignore,
     onlyFiles: true,
   });
 }

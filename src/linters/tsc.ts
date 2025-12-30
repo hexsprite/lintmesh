@@ -89,7 +89,12 @@ export class TscAdapter implements Linter {
     }
 
     // tsc/tsgo must run on whole project, we filter results after
-    const result = await exec(binary.bin, ['--noEmit', '--pretty', 'false'], {
+    const args = ['--noEmit', '--pretty', 'false'];
+
+    if (options.verbose) {
+      console.error(`lintmesh: [tsc] ${binary.bin} ${args.join(' ')}`);
+    }
+    const result = await exec(binary.bin, args, {
       timeout: options.timeout,
       cwd: options.cwd,
     });

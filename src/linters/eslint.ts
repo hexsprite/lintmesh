@@ -52,6 +52,7 @@ export class ESLintAdapter implements Linter {
 
   async run(options: LinterOptions): Promise<LinterResult> {
     const startTime = Date.now();
+    const bin = this.getBinPath(options.cwd);
 
     const args = [
       '--format', 'json',
@@ -59,7 +60,11 @@ export class ESLintAdapter implements Linter {
       ...options.files,
     ];
 
-    const result = await exec(this.getBinPath(options.cwd), args, {
+    if (options.verbose) {
+      console.error(`lintmesh: [eslint] ${bin} ${args.join(' ')}`);
+    }
+
+    const result = await exec(bin, args, {
       timeout: options.timeout,
       cwd: options.cwd,
     });

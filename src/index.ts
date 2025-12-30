@@ -44,6 +44,7 @@ program
   .option('--timeout <ms>', 'Per-linter timeout in milliseconds', '30000')
   .option('--cwd <path>', 'Working directory', process.cwd())
   .option('--quiet', 'Suppress stderr progress messages', false)
+  .option('--verbose', 'Show command lines being executed', false)
   .action(async (files, opts) => {
     try {
       // Load config file if present
@@ -94,6 +95,7 @@ program
 
       const options = {
         files: filesToLint,
+        exclude: configDefaults.exclude,
         json: true,
         pretty: opts.pretty,
         linters: linterList,
@@ -101,6 +103,7 @@ program
         timeout,
         cwd: opts.cwd,
         quiet: opts.quiet,
+        verbose: opts.verbose,
       };
 
       const output = await runLinters(options);

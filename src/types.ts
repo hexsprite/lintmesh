@@ -132,6 +132,8 @@ export interface LinterOptions {
   cwd: string;
   /** Timeout in milliseconds */
   timeout: number;
+  /** Show command lines being executed */
+  verbose?: boolean;
 }
 
 /**
@@ -173,6 +175,8 @@ export interface Linter {
 export interface CliOptions {
   /** Files or globs to lint */
   files: string[];
+  /** Patterns to exclude from linting */
+  exclude: string[];
   /** Output as JSON (always true in MVP) */
   json: boolean;
   /** Pretty-print JSON output */
@@ -187,4 +191,6 @@ export interface CliOptions {
   cwd: string;
   /** Suppress stderr progress */
   quiet: boolean;
+  /** Show command lines being executed */
+  verbose: boolean;
 }

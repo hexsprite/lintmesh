@@ -67,7 +67,7 @@ export async function runLinters(options: CliOptions): Promise<VibelintOutput> {
   const startTime = Date.now();
 
   // Resolve files
-  const files = await resolveFiles(options.files, options.cwd);
+  const files = await resolveFiles(options.files, options.cwd, options.exclude);
 
   if (files.length === 0) {
     return {
@@ -118,6 +118,7 @@ export async function runLinters(options: CliOptions): Promise<VibelintOutput> {
           patterns: options.files, // Original CLI patterns for filtering
           cwd: options.cwd,
           timeout: options.timeout,
+          verbose: options.verbose,
         });
 
         const run: LinterRun = {
