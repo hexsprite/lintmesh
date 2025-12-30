@@ -3,9 +3,13 @@ import path from 'node:path';
 import type { Linter, LinterOptions, LinterResult, Issue } from './interface.js';
 import { exec } from '../utils/exec.js';
 
+function isGlobPattern(pattern: string): boolean {
+  return /[*?{[]/.test(pattern);
+}
+
 /**
  * Filter issues to only those matching requested patterns.
- * Matches exact file paths or directory prefixes.
+ * Matches exact file paths, directory prefixes, or glob patterns.
  * Patterns and issue.path are both relative to cwd.
  */
 export function filterByPatterns(issues: Issue[], patterns: string[]): Issue[] {
@@ -16,6 +20,9 @@ export function filterByPatterns(issues: Issue[], patterns: string[]): Issue[] {
 
   // '.' means "current directory" = match everything
   if (normalized.includes('.')) return issues;
+
+  // Glob patterns mean files were already filtered by resolveFiles - return all
+  if (normalized.some(isGlobPattern)) return issues;
 
   return issues.filter(issue =>
     normalized.some(pattern =>

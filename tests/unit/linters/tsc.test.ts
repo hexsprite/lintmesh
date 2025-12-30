@@ -147,4 +147,34 @@ describe('filterByPatterns', () => {
 
     expect(result).toHaveLength(4);
   });
+
+  it('returns all issues when pattern contains glob *', () => {
+    const result = filterByPatterns(issues, ['**/*.ts']);
+
+    expect(result).toHaveLength(4);
+  });
+
+  it('returns all issues when pattern contains glob ?', () => {
+    const result = filterByPatterns(issues, ['src/?.ts']);
+
+    expect(result).toHaveLength(4);
+  });
+
+  it('returns all issues when pattern contains glob {}', () => {
+    const result = filterByPatterns(issues, ['**/*.{ts,tsx}']);
+
+    expect(result).toHaveLength(4);
+  });
+
+  it('returns all issues when pattern contains glob []', () => {
+    const result = filterByPatterns(issues, ['src/[a-z]*.ts']);
+
+    expect(result).toHaveLength(4);
+  });
+
+  it('filters normally when no glob characters', () => {
+    const result = filterByPatterns(issues, ['src']);
+
+    expect(result).toHaveLength(2);
+  });
 });
