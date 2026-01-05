@@ -1,8 +1,14 @@
 # lintmesh
 
+[![npm version](https://img.shields.io/npm/v/lintmesh.svg)](https://www.npmjs.com/package/lintmesh)
+[![license](https://img.shields.io/npm/l/lintmesh.svg)](https://github.com/hexsprite/lintmesh/blob/master/LICENSE)
+[![node](https://img.shields.io/node/v/lintmesh.svg)](https://nodejs.org)
+
 **Run multiple linters in parallel. Get unified output.**
 
 ESLint taking 15 seconds while oxlint finishes in 50ms? Run them simultaneously and save time. lintmesh orchestrates your linters and merges their output into a single, consistent format.
+
+![lintmesh demo](demo.gif)
 
 ## Features
 
