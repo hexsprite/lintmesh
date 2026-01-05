@@ -134,6 +134,8 @@ export interface LinterOptions {
   timeout: number;
   /** Show command lines being executed */
   verbose?: boolean;
+  /** Auto-fix issues where possible */
+  fix?: boolean;
 }
 
 /**
@@ -177,7 +179,7 @@ export interface CliOptions {
   files: string[];
   /** Patterns to exclude from linting */
   exclude: string[];
-  /** Output as JSON (always true in MVP) */
+  /** Output as JSON (default: false, compact output) */
   json: boolean;
   /** Pretty-print JSON output */
   pretty: boolean;
@@ -193,4 +195,8 @@ export interface CliOptions {
   quiet: boolean;
   /** Show command lines being executed */
   verbose: boolean;
+  /** Running in interactive terminal (TTY) */
+  interactive: boolean;
+  /** Auto-fix issues where possible */
+  fix: boolean;
 }

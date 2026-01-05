@@ -26,13 +26,13 @@ describe('lintmesh CLI integration', () => {
   });
 
   describe('JSON output structure', () => {
-    it('outputs valid JSON', async () => {
-      const result = await $`bun run dist/lintmesh.js --quiet --linters=eslint ${fixturesDir}/clean.ts`.quiet().nothrow();
+    it('outputs valid JSON with --json flag', async () => {
+      const result = await $`bun run dist/lintmesh.js --json --quiet --linters=eslint ${fixturesDir}/clean.ts`.quiet().nothrow();
       expect(() => JSON.parse(result.stdout.toString())).not.toThrow();
     });
 
     it('includes required fields', async () => {
-      const result = await $`bun run dist/lintmesh.js --quiet --linters=eslint ${fixturesDir}/clean.ts`.quiet().nothrow();
+      const result = await $`bun run dist/lintmesh.js --json --quiet --linters=eslint ${fixturesDir}/clean.ts`.quiet().nothrow();
       const output = JSON.parse(result.stdout.toString());
 
       expect(output).toHaveProperty('timestamp');
@@ -44,7 +44,7 @@ describe('lintmesh CLI integration', () => {
     });
 
     it('summary matches issues', async () => {
-      const result = await $`bun run dist/lintmesh.js --quiet --linters=eslint ${fixturesDir}/eslint-errors.ts`.quiet().nothrow();
+      const result = await $`bun run dist/lintmesh.js --json --quiet --linters=eslint ${fixturesDir}/eslint-errors.ts`.quiet().nothrow();
       const output = JSON.parse(result.stdout.toString());
 
       expect(output.summary.total).toBe(output.issues.length);
@@ -65,7 +65,7 @@ describe('lintmesh CLI integration', () => {
 
   describe('linter filtering', () => {
     it('only runs specified linters', async () => {
-      const result = await $`bun run dist/lintmesh.js --quiet --linters=eslint ${fixturesDir}/clean.ts`.quiet().nothrow();
+      const result = await $`bun run dist/lintmesh.js --json --quiet --linters=eslint ${fixturesDir}/clean.ts`.quiet().nothrow();
       const output = JSON.parse(result.stdout.toString());
 
       expect(output.linters.length).toBe(1);
@@ -75,7 +75,7 @@ describe('lintmesh CLI integration', () => {
 
   describe('issue structure', () => {
     it('issues have required fields', async () => {
-      const result = await $`bun run dist/lintmesh.js --quiet --linters=eslint ${fixturesDir}/eslint-errors.ts`.quiet().nothrow();
+      const result = await $`bun run dist/lintmesh.js --json --quiet --linters=eslint ${fixturesDir}/eslint-errors.ts`.quiet().nothrow();
       const output = JSON.parse(result.stdout.toString());
 
       if (output.issues.length > 0) {
@@ -91,7 +91,7 @@ describe('lintmesh CLI integration', () => {
     });
 
     it('ruleId is namespaced', async () => {
-      const result = await $`bun run dist/lintmesh.js --quiet --linters=eslint ${fixturesDir}/eslint-errors.ts`.quiet().nothrow();
+      const result = await $`bun run dist/lintmesh.js --json --quiet --linters=eslint ${fixturesDir}/eslint-errors.ts`.quiet().nothrow();
       const output = JSON.parse(result.stdout.toString());
 
       if (output.issues.length > 0) {
@@ -102,7 +102,7 @@ describe('lintmesh CLI integration', () => {
 
   describe('pretty output', () => {
     it('formats JSON when --pretty is used', async () => {
-      const result = await $`bun run dist/lintmesh.js --quiet --pretty --linters=eslint ${fixturesDir}/clean.ts`.quiet().nothrow();
+      const result = await $`bun run dist/lintmesh.js --json --quiet --pretty --linters=eslint ${fixturesDir}/clean.ts`.quiet().nothrow();
       const stdout = result.stdout.toString();
 
       // Pretty JSON has newlines
@@ -112,9 +112,28 @@ describe('lintmesh CLI integration', () => {
 
   describe('node runtime compatibility', () => {
     it('works with node', async () => {
-      const result = await $`node dist/lintmesh.js --quiet --linters=eslint ${fixturesDir}/clean.ts`.quiet().nothrow();
+      const result = await $`node dist/lintmesh.js --json --quiet --linters=eslint ${fixturesDir}/clean.ts`.quiet().nothrow();
       expect(result.exitCode).toBe(0);
       expect(() => JSON.parse(result.stdout.toString())).not.toThrow();
+    });
+  });
+
+  describe('compact output (default)', () => {
+    it('outputs human-readable format by default', async () => {
+      const result = await $`bun run dist/lintmesh.js --quiet --linters=eslint ${fixturesDir}/eslint-errors.ts`.quiet().nothrow();
+      const stdout = result.stdout.toString();
+
+      // Compact format has path:line:col pattern
+      expect(stdout).toMatch(/\.ts:\d+:\d+/);
+      // And severity word
+      expect(stdout).toMatch(/error|warning/);
+    });
+
+    it('shows summary line', async () => {
+      const result = await $`bun run dist/lintmesh.js --quiet --linters=eslint ${fixturesDir}/clean.ts`.quiet().nothrow();
+      const stdout = result.stdout.toString();
+
+      expect(stdout).toContain('No issues found');
     });
   });
 });

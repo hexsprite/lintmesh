@@ -4,6 +4,7 @@ import { ESLintAdapter } from './linters/eslint.js';
 import { OxlintAdapter } from './linters/oxlint.js';
 import { TscAdapter } from './linters/tsc.js';
 import { BiomeAdapter } from './linters/biome.js';
+import { ProgressDisplay } from './utils/progress.js';
 import type { Linter } from './linters/interface.js';
 
 /**
@@ -95,11 +96,14 @@ export async function runLinters(options: CliOptions): Promise<VibelintOutput> {
     .filter(check => check.available)
     .map(check => check.adapter);
 
-  if (!options.quiet && availableAdapters.length < adapters.length) {
-    const unavailable = adapters
-      .filter(a => !availableAdapters.includes(a))
-      .map(a => a.name);
-    console.error(`lintmesh: skipping unavailable linters: ${unavailable.join(', ')}`);
+  // Set up progress display for interactive mode
+  let progress: ProgressDisplay | null = null;
+  if (options.interactive) {
+    progress = new ProgressDisplay();
+    for (const adapter of availableAdapters) {
+      progress.addTask(adapter.name);
+    }
+    progress.start();
   }
 
   // Run linters in parallel
@@ -107,9 +111,7 @@ export async function runLinters(options: CliOptions): Promise<VibelintOutput> {
     availableAdapters.map(async adapter => {
       const linterStart = Date.now();
 
-      if (!options.quiet) {
-        console.error(`lintmesh: running ${adapter.name}...`);
-      }
+      progress?.update(adapter.name, 'running');
 
       try {
         const version = await adapter.getVersion();
@@ -119,6 +121,7 @@ export async function runLinters(options: CliOptions): Promise<VibelintOutput> {
           cwd: options.cwd,
           timeout: options.timeout,
           verbose: options.verbose,
+          fix: options.fix,
         });
 
         const run: LinterRun = {
@@ -130,11 +133,13 @@ export async function runLinters(options: CliOptions): Promise<VibelintOutput> {
           filesProcessed: result.filesProcessed,
         };
 
-        if (!options.quiet) {
-          console.error(
-            `lintmesh: ${adapter.name} complete (${result.issues.length} issues in ${result.durationMs}ms)`
-          );
-        }
+        const issueCount = result.issues.length;
+        progress?.update(
+          adapter.name,
+          'success',
+          issueCount > 0 ? `${issueCount} issue${issueCount === 1 ? '' : 's'}` : undefined,
+          result.durationMs
+        );
 
         return { run, issues: result.issues };
       } catch (error) {
@@ -147,14 +152,15 @@ export async function runLinters(options: CliOptions): Promise<VibelintOutput> {
           filesProcessed: 0,
         };
 
-        if (!options.quiet) {
-          console.error(`lintmesh: ${adapter.name} failed: ${run.error}`);
-        }
+        progress?.update(adapter.name, 'error', run.error, run.durationMs);
 
         return { run, issues: [] };
       }
     })
   );
+
+  // Stop progress display
+  progress?.stop();
 
   // Aggregate results
   const linters = linterResults.map(r => r.run);

@@ -1,6 +1,24 @@
 {
   "name": "lintmesh",
-  "version": "0.1.0",
+  "version": "0.1.1",
+  "description": "Run multiple linters in parallel with unified output",
+  "keywords": [
+    "lint",
+    "linter",
+    "eslint",
+    "oxlint",
+    "typescript",
+    "tsc",
+    "biome",
+    "parallel",
+    "cli",
+    "developer-tools"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jbatchelor/lintmesh"
+  },
   "type": "module",
   "main": "./dist/lintmesh.js",
   "types": "./dist/index.d.ts",
