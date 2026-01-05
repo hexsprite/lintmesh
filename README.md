@@ -8,7 +8,7 @@
 
 ESLint taking 15 seconds while oxlint finishes in 50ms? Run them simultaneously and save time. lintmesh orchestrates your linters and merges their output into a single, consistent format.
 
-![lintmesh demo](demo.gif)
+![lintmesh demo](https://raw.githubusercontent.com/hexsprite/lintmesh/master/demo.gif)
 
 ## Features
 
