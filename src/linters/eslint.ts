@@ -57,8 +57,13 @@ export class ESLintAdapter implements Linter {
     const args = [
       '--format', 'json',
       '--no-error-on-unmatched-pattern',
-      ...options.files,
     ];
+
+    if (options.fix) {
+      args.push('--fix');
+    }
+
+    args.push(...options.files);
 
     if (options.verbose) {
       console.error(`lintmesh: [eslint] ${bin} ${args.join(' ')}`);

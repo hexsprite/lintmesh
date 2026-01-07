@@ -136,6 +136,8 @@ export interface LinterOptions {
   verbose?: boolean;
   /** Auto-fix issues where possible */
   fix?: boolean;
+  /** Extra arguments from config to append to linter command */
+  extraArgs?: string[];
 }
 
 /**
@@ -172,6 +174,14 @@ export interface Linter {
 }
 
 /**
+ * Per-linter configuration from config file
+ */
+export interface LinterConfigArgs {
+  /** Extra arguments to append to linter command */
+  args?: string[];
+}
+
+/**
  * CLI options parsed from command line arguments
  */
 export interface CliOptions {
@@ -199,4 +209,6 @@ export interface CliOptions {
   interactive: boolean;
   /** Auto-fix issues where possible */
   fix: boolean;
+  /** Per-linter configuration from config file */
+  linterConfigs?: Partial<Record<LinterName, LinterConfigArgs>>;
 }

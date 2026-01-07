@@ -7,7 +7,7 @@ import { computeExitCode } from './utils/exit-code.js';
 import { init, printInitSummary } from './init.js';
 import { loadConfig, getConfigWithDefaults } from './utils/config-loader.js';
 import { createColors } from './utils/colors.js';
-import type { LinterName, Severity } from './types.js';
+import type { LinterName, Severity, LinterConfigArgs } from './types.js';
 import type { LinterId } from './config.js';
 
 const require = createRequire(import.meta.url);
@@ -102,6 +102,16 @@ program
       // Interactive mode: TTY stderr, not quiet, not outputting JSON
       const interactive = process.stderr.isTTY && !opts.quiet && !opts.json;
 
+      // Extract per-linter args from config
+      const linterConfigs: Partial<Record<LinterName, LinterConfigArgs>> = {};
+      if (loadedConfig.config.linters) {
+        for (const [id, cfg] of Object.entries(loadedConfig.config.linters)) {
+          if (cfg.args?.length) {
+            linterConfigs[id as LinterName] = { args: cfg.args };
+          }
+        }
+      }
+
       const options = {
         files: filesToLint,
         exclude: configDefaults.exclude,
@@ -115,6 +125,7 @@ program
         quiet: opts.quiet,
         verbose: opts.verbose,
         interactive,
+        linterConfigs,
       };
 
       const output = await runLinters(options);

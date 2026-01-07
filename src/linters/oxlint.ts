@@ -64,8 +64,18 @@ export class OxlintAdapter implements Linter {
     const args = [
       '--format', 'json',
       '--type-aware',
-      ...options.files,
     ];
+
+    // Add extra args from config (e.g., --type-check)
+    if (options.extraArgs?.length) {
+      args.push(...options.extraArgs);
+    }
+
+    if (options.fix) {
+      args.push('--fix');
+    }
+
+    args.push(...options.files);
 
     if (options.verbose) {
       console.error(`lintmesh: [oxlint] ${bin} ${args.join(' ')}`);
