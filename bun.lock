@@ -5,7 +5,6 @@
     "": {
       "name": "lintmesh",
       "dependencies": {
-        "lintmesh": ".",
         "@aivenio/tsc-output-parser": "^2.1.0",
         "commander": "^14.0.2",
         "execa": "^9.5.2",
@@ -214,8 +213,6 @@
     "keyv": ["keyv@4.5.4", "", { "dependencies": { "json-buffer": "3.0.1" } }, ""],
 
     "levn": ["levn@0.4.1", "", { "dependencies": { "prelude-ls": "^1.2.1", "type-check": "~0.4.0" } }, ""],
-
-    "lintmesh": ["lintmesh@root:", { "bin": "dist/lintmesh.js" }],
 
     "locate-path": ["locate-path@6.0.0", "", { "dependencies": { "p-locate": "^5.0.0" } }, ""],
 
