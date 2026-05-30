@@ -107,12 +107,14 @@ export class ProgressDisplay {
         return `${DIM}○${RESET} ${task.name}`;
       case 'running':
         return `${CYAN}${SPINNER_FRAMES[this.spinnerFrame]}${RESET} ${task.name}...`;
-      case 'success':
+      case 'success': {
         const msg = task.message ? ` ${DIM}${task.message}${RESET}` : '';
         return `${GREEN}${CHECK}${RESET} ${task.name}${msg} ${duration}`;
-      case 'error':
+      }
+      case 'error': {
         const err = task.message ? ` ${DIM}${task.message}${RESET}` : '';
         return `${RED}${CROSS}${RESET} ${task.name}${err} ${duration}`;
+      }
     }
   }
 

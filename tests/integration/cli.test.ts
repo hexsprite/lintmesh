@@ -63,6 +63,58 @@ describe('lintmesh CLI integration', () => {
     });
   });
 
+  // Regression: a linter that fails to RUN (e.g. eslint.config.mjs imports a
+  // missing package and crashes with exit 2) must surface as a hard failure —
+  // even when OTHER linters succeed. Previously lintmesh required ALL linters
+  // to fail before exiting non-zero, so one crashed linter (eslint) was masked
+  // by a passing one (biome) and reported "No issues found" — a silent CI blind
+  // spot where a broken config passes review. We run eslint+biome from inside
+  // the fixture dir: eslint's config import crashes, biome passes cleanly.
+  describe('a linter failing to run is not masked by a passing linter', () => {
+    const brokenDir = path.join(fixturesDir, 'broken-eslint-config');
+    const distPath = path.join(import.meta.dir, '../../dist/lintmesh.js');
+
+    beforeAll(async () => {
+      // Symlink node_modules so eslint + biome binaries resolve when process
+      // cwd is the fixture dir (adapters look for <cwd>/node_modules/.bin/*).
+      const link = path.join(brokenDir, 'node_modules');
+      const target = path.join(import.meta.dir, '../../node_modules');
+      await $`rm -rf ${link}`.quiet().nothrow();
+      await $`ln -s ${target} ${link}`.quiet().nothrow();
+    });
+
+    it('exits 2 when eslint config crashes but biome passes', async () => {
+      const result = await $`bun run ${distPath} --quiet --linters=eslint,biome sample.ts`
+        .cwd(brokenDir)
+        .quiet()
+        .nothrow();
+      expect(result.exitCode).toBe(2);
+    });
+
+    it('reports the failure instead of "No issues found"', async () => {
+      const result = await $`bun run ${distPath} --quiet --linters=eslint,biome sample.ts`
+        .cwd(brokenDir)
+        .quiet()
+        .nothrow();
+      const out = result.stdout.toString();
+      expect(out).not.toContain('No issues found');
+      expect(out.toLowerCase()).toContain('failed to run');
+    });
+
+    it('marks the crashed linter as not successful while the other succeeds', async () => {
+      const result = await $`bun run ${distPath} --json --quiet --linters=eslint,biome sample.ts`
+        .cwd(brokenDir)
+        .quiet()
+        .nothrow();
+      const output = JSON.parse(result.stdout.toString());
+      const eslint = output.linters.find((l: { name: string }) => l.name === 'eslint');
+      const biome = output.linters.find((l: { name: string }) => l.name === 'biome');
+      expect(eslint?.success).toBe(false);
+      expect(biome?.success).toBe(true);
+      expect(result.exitCode).toBe(2);
+    });
+  });
+
   describe('linter filtering', () => {
     it('only runs specified linters', async () => {
       const result = await $`bun run dist/lintmesh.js --json --quiet --linters=eslint ${fixturesDir}/clean.ts`.quiet().nothrow();

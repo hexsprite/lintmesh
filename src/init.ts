@@ -18,7 +18,6 @@ function generateConfig(results: DetectionResult[]): string {
 
   const enabledLinters = results.filter(r => r.recommended);
   const availableLinters = results.filter(r => r.available && !r.recommended);
-  const unavailableLinters = results.filter(r => !r.available);
 
   // Add enabled linters
   enabledLinters.forEach((r, i) => {
@@ -34,9 +33,7 @@ function generateConfig(results: DetectionResult[]): string {
   });
 
   // Add available but not recommended (commented)
-  availableLinters.forEach((r, i) => {
-    const isLast = i === availableLinters.length - 1;
-    const comma = isLast ? '' : ',';
+  availableLinters.forEach((r) => {
     const source = r.binSource === 'local' ? 'node_modules' : 'PATH';
     const version = r.version ? ` v${r.version}` : '';
 

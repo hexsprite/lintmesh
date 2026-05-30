@@ -1,6 +1,6 @@
 {
   "name": "lintmesh",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Run multiple linters in parallel with unified output",
   "keywords": [
     "lint",

@@ -30,9 +30,23 @@ function makeOutput(issues: Array<{ severity: 'error' | 'warning' | 'info' }>): 
 }
 
 describe('computeExitCode', () => {
-  describe('when all linters failed', () => {
-    it('returns 2', () => {
+  describe('when a linter failed', () => {
+    it('returns 2 (all linters failed)', () => {
       const output = makeOutput([]);
+      expect(computeExitCode(output, 'error', true)).toBe(2);
+    });
+
+    // Regression: a single linter crashing (e.g. eslint config fails to load)
+    // ran zero checks, so it must surface as a hard failure — NOT be masked
+    // as "clean" just because another linter succeeded and parsed no issues.
+    it('returns 2 when any linter failed even with no parsed issues', () => {
+      const output = makeOutput([]);
+      expect(computeExitCode(output, 'error', true)).toBe(2);
+    });
+
+    it('returns 2 when a linter failed even if issues exist from others', () => {
+      const output = makeOutput([{ severity: 'error' }]);
+      // anyLinterFailed=true must win over the issue-threshold result (1)
       expect(computeExitCode(output, 'error', true)).toBe(2);
     });
   });

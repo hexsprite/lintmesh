@@ -135,12 +135,23 @@ export async function runLinters(options: CliOptions): Promise<VibelintOutput> {
         };
 
         const issueCount = result.issues.length;
-        progress?.update(
-          adapter.name,
-          'success',
-          issueCount > 0 ? `${issueCount} issue${issueCount === 1 ? '' : 's'}` : undefined,
-          result.durationMs
-        );
+        if (result.success) {
+          progress?.update(
+            adapter.name,
+            'success',
+            issueCount > 0 ? `${issueCount} issue${issueCount === 1 ? '' : 's'}` : undefined,
+            result.durationMs
+          );
+        } else {
+          // Linter ran but failed (config crash, timeout, parse error).
+          // Must not show as a ✓ success.
+          progress?.update(
+            adapter.name,
+            'error',
+            result.error?.message ?? 'failed',
+            result.durationMs
+          );
+        }
 
         return { run, issues: result.issues };
       } catch (error) {

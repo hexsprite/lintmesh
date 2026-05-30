@@ -130,9 +130,12 @@ program
 
       const output = await runLinters(options);
 
-      // Compute exit code
-      const allFailed = output.linters.every(l => !l.success);
-      const exitCode = computeExitCode(output, options.failOn, allFailed);
+      // Compute exit code. ANY linter failing (not just all) is a hard
+      // failure: a crashed linter ran zero checks, so reporting "clean" would
+      // be a false pass. See computeExitCode.
+      const failedLinters = output.linters.filter(l => !l.success);
+      const anyFailed = failedLinters.length > 0;
+      const exitCode = computeExitCode(output, options.failOn, anyFailed);
 
       // Format output
       let formattedOutput: string;
@@ -153,6 +156,14 @@ program
           const rule = c.dim(issue.ruleId);
           lines.push(`${loc} ${sev} ${rule}: ${issue.message}`);
         }
+        // Surface linters that failed to RUN (config crash, timeout, parse
+        // error). These ran zero checks; never let them hide behind a clean
+        // issue list.
+        for (const linter of failedLinters) {
+          const reason = linter.error ?? 'unknown error';
+          lines.push(c.red(`${linter.name} failed to run: ${reason}`));
+        }
+
         // Add summary line
         const { errors, warnings } = output.summary;
         if (output.summary.total > 0) {
@@ -160,6 +171,13 @@ program
           const errText = errors > 0 ? c.red(`${errors} errors`) : `${errors} errors`;
           const warnText = warnings > 0 ? c.yellow(`${warnings} warnings`) : `${warnings} warnings`;
           lines.push(`${output.summary.total} issues (${errText}, ${warnText})`);
+        } else if (anyFailed) {
+          lines.push('');
+          lines.push(
+            c.red(
+              `${failedLinters.length} linter${failedLinters.length === 1 ? '' : 's'} failed to run — results are incomplete`
+            )
+          );
         } else {
           lines.push(c.cyan('No issues found'));
         }
