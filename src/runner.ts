@@ -123,6 +123,7 @@ export async function runLinters(options: CliOptions): Promise<VibelintOutput> {
           verbose: options.verbose,
           fix: options.fix,
           extraArgs: options.linterConfigs?.[adapter.name]?.args,
+          fixArgs: options.linterConfigs?.[adapter.name]?.fixArgs,
         });
 
         const run: LinterRun = {

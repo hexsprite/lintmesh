@@ -13,7 +13,10 @@ describe('ConfigSchema', () => {
       $schema: 'https://example.com/schema.json',
       linters: {
         eslint: { enabled: true, bin: null, args: ['--fix'] },
-        oxlint: { enabled: true },
+        oxlint: {
+          enabled: true,
+          fixArgs: ['-A', 'typescript/no-unnecessary-type-assertion'],
+        },
         biome: { enabled: false },
         tsc: { enabled: true, bin: '/usr/local/bin/tsc' },
       },
@@ -24,6 +27,12 @@ describe('ConfigSchema', () => {
     };
     const result = ConfigSchema.safeParse(config);
     expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.linters?.oxlint?.fixArgs).toEqual([
+        '-A',
+        'typescript/no-unnecessary-type-assertion',
+      ]);
+    }
   });
 
   test('rejects invalid linter id', () => {

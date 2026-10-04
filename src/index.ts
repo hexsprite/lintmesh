@@ -106,8 +106,11 @@ program
       const linterConfigs: Partial<Record<LinterName, LinterConfigArgs>> = {};
       if (loadedConfig.config.linters) {
         for (const [id, cfg] of Object.entries(loadedConfig.config.linters)) {
-          if (cfg.args?.length) {
-            linterConfigs[id as LinterName] = { args: cfg.args };
+          if (cfg.args?.length || cfg.fixArgs?.length) {
+            linterConfigs[id as LinterName] = {
+              ...(cfg.args?.length ? { args: cfg.args } : {}),
+              ...(cfg.fixArgs?.length ? { fixArgs: cfg.fixArgs } : {}),
+            };
           }
         }
       }

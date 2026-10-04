@@ -138,6 +138,8 @@ export interface LinterOptions {
   fix?: boolean;
   /** Extra arguments from config to append to linter command */
   extraArgs?: string[];
+  /** Extra arguments from config to append only during autofix runs */
+  fixArgs?: string[];
 }
 
 /**
@@ -179,6 +181,8 @@ export interface Linter {
 export interface LinterConfigArgs {
   /** Extra arguments to append to linter command */
   args?: string[];
+  /** Extra arguments to append only when autofix is enabled */
+  fixArgs?: string[];
 }
 
 /**

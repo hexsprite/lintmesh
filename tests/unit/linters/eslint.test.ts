@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'bun:test';
 import { ESLintAdapter } from '../../../src/linters/eslint.js';
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 
 const mockOutput = fs.readFileSync(
@@ -8,7 +9,65 @@ const mockOutput = fs.readFileSync(
   'utf-8'
 );
 
+function createEslintStub() {
+  const cwd = fs.mkdtempSync(path.join(os.tmpdir(), 'lintmesh-eslint-'));
+  const binDir = path.join(cwd, 'node_modules', '.bin');
+  const binPath = path.join(binDir, 'eslint');
+  const argsPath = path.join(binDir, 'args.txt');
+
+  fs.mkdirSync(binDir, { recursive: true });
+  fs.writeFileSync(
+    binPath,
+    [
+      '#!/bin/sh',
+      'printf \'%s\\n\' "$@" > "$(dirname "$0")/args.txt"',
+      'printf \'%s\\n\' \'[]\'',
+      '',
+    ].join('\n'),
+    { mode: 0o755 }
+  );
+
+  return { cwd, argsPath };
+}
+
 describe('ESLintAdapter', () => {
+  describe('fix arguments', () => {
+    it('appends configured fixArgs only when autofix is enabled', async () => {
+      const { cwd, argsPath } = createEslintStub();
+      const adapter = new ESLintAdapter();
+      const commonOptions = {
+        files: ['src/example.ts'],
+        patterns: ['src/example.ts'],
+        cwd,
+        timeout: 1000,
+        fixArgs: ['--rule', 'no-console:error'],
+      };
+
+      try {
+        await adapter.run({ ...commonOptions, fix: false });
+        expect(fs.readFileSync(argsPath, 'utf-8').trim().split('\n')).toEqual([
+          '--format',
+          'json',
+          '--no-error-on-unmatched-pattern',
+          'src/example.ts',
+        ]);
+
+        await adapter.run({ ...commonOptions, fix: true });
+        expect(fs.readFileSync(argsPath, 'utf-8').trim().split('\n')).toEqual([
+          '--format',
+          'json',
+          '--no-error-on-unmatched-pattern',
+          '--fix',
+          '--rule',
+          'no-console:error',
+          'src/example.ts',
+        ]);
+      } finally {
+        fs.rmSync(cwd, { recursive: true, force: true });
+      }
+    });
+  });
+
   describe('parseOutput', () => {
     it('parses JSON output correctly', () => {
       const adapter = new ESLintAdapter();

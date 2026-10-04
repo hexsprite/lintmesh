@@ -73,6 +73,9 @@ export class OxlintAdapter implements Linter {
 
     if (options.fix) {
       args.push('--fix');
+      if (options.fixArgs?.length) {
+        args.push(...options.fixArgs);
+      }
     }
 
     args.push(...options.files);
