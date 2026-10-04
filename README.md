@@ -84,7 +84,10 @@ Create `lintmesh.jsonc` in your project root:
 {
   "linters": {
     "eslint": { "enabled": true },
-    "oxlint": { "enabled": true },
+    "oxlint": {
+      "enabled": true,
+      "fixArgs": ["-A", "typescript/no-unnecessary-type-assertion"]
+    },
     "tsc": { "enabled": true },
     "biome": { "enabled": false }
   },
@@ -94,6 +97,9 @@ Create `lintmesh.jsonc` in your project root:
   "timeout": 30000
 }
 ```
+
+Use `args` for options passed on every run. `fixArgs` are passed only with
+`lintmesh --fix`.
 
 Generate config automatically:
 

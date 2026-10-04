@@ -20,6 +20,8 @@ export const LinterConfigSchema = z.object({
   bin: z.string().nullable().optional(),
   /** Extra arguments to append to linter command */
   args: z.array(z.string()).optional(),
+  /** Extra arguments to append to linter command only during autofix runs */
+  fixArgs: z.array(z.string()).optional(),
 });
 
 export type LinterConfig = z.infer<typeof LinterConfigSchema>;
