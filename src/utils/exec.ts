@@ -22,11 +22,14 @@ export async function exec(
       reject: false,
     });
 
+    // reject:false returns a timeout instead of throwing, so it is read here.
     return {
       stdout: result.stdout,
-      stderr: result.stderr,
+      stderr: result.timedOut
+        ? `Process timed out after ${options.timeout}ms`
+        : result.stderr,
       exitCode: result.exitCode ?? 1,
-      timedOut: false,
+      timedOut: result.timedOut,
     };
   } catch (error) {
     const execaError = error as ExecaError & { killed?: boolean };
