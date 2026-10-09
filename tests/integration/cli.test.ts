@@ -115,6 +115,34 @@ describe('lintmesh CLI integration', () => {
     });
   });
 
+  // A linter that hits --timeout produced no verdict. It must fail the run and
+  // be named, never read as "No issues found".
+  describe('a linter that times out is a failure', () => {
+    const distPath = path.join(import.meta.dir, '../../dist/lintmesh.js');
+    const fixture = path.join(fixturesDir, 'eslint-errors.ts');
+
+    it('exits 2 and names the timed-out linter', async () => {
+      const result = await $`bun run ${distPath} --quiet --linters=eslint --timeout 1 ${fixture}`
+        .quiet()
+        .nothrow();
+      const out = result.stdout.toString();
+      expect(result.exitCode).toBe(2);
+      expect(out).not.toContain('No issues found');
+      expect(out.toLowerCase()).toContain('timed out');
+      expect(out.toLowerCase()).toContain('eslint');
+    });
+
+    it('marks the timed-out linter as not successful in JSON', async () => {
+      const result = await $`bun run ${distPath} --json --quiet --linters=eslint --timeout 1 ${fixture}`
+        .quiet()
+        .nothrow();
+      const output = JSON.parse(result.stdout.toString());
+      const eslint = output.linters.find((l: { name: string }) => l.name === 'eslint');
+      expect(eslint?.success).toBe(false);
+      expect(eslint?.error).toContain('timed out');
+    });
+  });
+
   describe('linter filtering', () => {
     it('only runs specified linters', async () => {
       const result = await $`bun run dist/lintmesh.js --json --quiet --linters=eslint ${fixturesDir}/clean.ts`.quiet().nothrow();
